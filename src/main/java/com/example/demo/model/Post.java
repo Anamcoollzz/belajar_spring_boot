@@ -8,8 +8,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "posts")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Post {
 
     @Id
@@ -25,70 +32,15 @@ public class Post {
     @Column(name = "author", nullable = false)
     private String author;
 
-    // @Column(name = "image", nullable = true)
-    // private String image;
+    @Column(name = "image", nullable = true)
+    private String image;
+
+    @Column(name = "is_published", nullable = false)
+    private Boolean isPublished = false;
 
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    // public String getImage() {
-    // return image;
-    // }
-
-    // public void setImage(String image) {
-    // this.image = image;
-    // }
-
 }

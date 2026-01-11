@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.example.demo.model.Post;
 
 import lombok.AllArgsConstructor;
 
@@ -33,7 +33,26 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<com.example.demo.model.Post> createPost(@RequestBody com.example.demo.model.Post post) {
+    public ResponseEntity<?> createPost(@Valid @ModelAttribute com.example.demo.dto.PostDto postDto,
+            BindingResult result) {
+
+        if (result.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors);
+        }
+
+        com.example.demo.model.Post post = new com.example.demo.model.Post();
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+        post.setAuthor(postDto.getAuthor());
+        post.setIsPublished(postDto.getIsPublished() != null ? postDto.getIsPublished() : false);
+
+        if (postDto.getImage() != null && !postDto.getImage().isEmpty()) {
+            String fileName = fileStorageService.storeFile(postDto.getImage());
+            post.setImage(fileName);
+        }
+
         com.example.demo.model.Post createdPost = postService.createPost(post);
         return ResponseEntity.ok(createdPost);
     }
@@ -71,13 +90,35 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<com.example.demo.model.Post> updatePost(@PathVariable Long id, @RequestBody Post post) {
-        com.example.demo.model.Post updatedPost = postService.updatePost(id, post);
-        if (updatedPost != null) {
-            return ResponseEntity.ok(updatedPost);
-        } else {
+    public ResponseEntity<?> updatePost(@PathVariable Long id,
+            @Valid @ModelAttribute com.example.demo.dto.PostDto postDto,
+            BindingResult result) {
+
+        if (result.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors);
+        }
+
+        com.example.demo.model.Post existingPost = postService.getPostById(id);
+        if (existingPost == null) {
             return ResponseEntity.notFound().build();
         }
+
+        existingPost.setTitle(postDto.getTitle());
+        existingPost.setContent(postDto.getContent());
+        existingPost.setAuthor(postDto.getAuthor());
+        if (postDto.getIsPublished() != null) {
+            existingPost.setIsPublished(postDto.getIsPublished());
+        }
+
+        if (postDto.getImage() != null && !postDto.getImage().isEmpty()) {
+            String fileName = fileStorageService.storeFile(postDto.getImage());
+            existingPost.setImage(fileName);
+        }
+
+        com.example.demo.model.Post updatedPost = postService.updatePost(id, existingPost);
+        return ResponseEntity.ok(updatedPost);
     }
 
     @DeleteMapping("/{id}")
