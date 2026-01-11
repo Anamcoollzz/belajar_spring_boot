@@ -23,6 +23,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api/posts")
 public class PostController {
     private final com.example.demo.service.PostService postService;
+    private final com.example.demo.service.FileStorageService fileStorageService;
 
     // Define your endpoints here
     @GetMapping
@@ -35,6 +36,18 @@ public class PostController {
     public ResponseEntity<com.example.demo.model.Post> createPost(@RequestBody com.example.demo.model.Post post) {
         com.example.demo.model.Post createdPost = postService.createPost(post);
         return ResponseEntity.ok(createdPost);
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<Map<String, String>> uploadFile(
+            @org.springframework.web.bind.annotation.RequestParam("image") org.springframework.web.multipart.MultipartFile file) {
+        String fileName = fileStorageService.storeFile(file);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("fileName", fileName);
+        response.put("message", "File uploaded successfully");
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
