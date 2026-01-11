@@ -27,8 +27,16 @@ public class PostController {
 
     // Define your endpoints here
     @GetMapping
-    public ResponseEntity<java.util.List<com.example.demo.model.Post>> getAllPosts() {
-        java.util.List<com.example.demo.model.Post> posts = postService.getAllPosts();
+    public ResponseEntity<org.springframework.data.domain.Page<com.example.demo.model.Post>> getAllPosts(
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "1") int page,
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "10") int size) {
+
+        // Convert 1-based page to 0-based page for Spring Data
+        int pageIndex = (page < 1) ? 0 : page - 1;
+
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(pageIndex,
+                size);
+        org.springframework.data.domain.Page<com.example.demo.model.Post> posts = postService.getAllPosts(pageable);
         return ResponseEntity.ok(posts);
     }
 

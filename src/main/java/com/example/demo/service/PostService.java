@@ -1,10 +1,11 @@
 package com.example.demo.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface PostService {
 
-    List<com.example.demo.model.Post> getAllPosts();
+    Page<com.example.demo.model.Post> getAllPosts(Pageable pageable);
 
     com.example.demo.model.Post getPostById(Long id);
 

@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
@@ -16,8 +18,8 @@ public class PostServiceImplementation implements PostService {
     // }
 
     @Override
-    public java.util.List<com.example.demo.model.Post> getAllPosts() {
-        return postRepository.findAll();
+    public Page<com.example.demo.model.Post> getAllPosts(Pageable pageable) {
+        return postRepository.findAll(pageable);
     }
 
     @Override
