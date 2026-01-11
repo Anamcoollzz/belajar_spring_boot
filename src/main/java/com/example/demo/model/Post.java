@@ -25,8 +25,8 @@ public class Post {
     @Column(name = "author", nullable = false)
     private String author;
 
-    @Column(name = "image")
-    private String image;
+    // @Column(name = "image", nullable = true)
+    // private String image;
 
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
@@ -83,12 +83,12 @@ public class Post {
         this.updatedAt = updatedAt;
     }
 
-    public String getImage() {
-        return image;
-    }
+    // public String getImage() {
+    // return image;
+    // }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
+    // public void setImage(String image) {
+    // this.image = image;
+    // }
 
 }
